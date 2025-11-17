@@ -1,67 +1,67 @@
-# Project Proposal  
-**Title:** Detecting Speculative Phases in AI-Related Assets Using Machine Learning  
-**Category:** Supervised Machine Learning / Financial Data Science  
+# Project Proposal – Linking Pre-Earnings Fundamentals to Market Reaction  
+## Advanced Programming / Data Science — Individual Project 2025  
+**Student:** Contente Ricardo  
+**Category:** Data Analysis & Visualization + Business & Finance Tools / Statistical Analysis Tools**
 
 ---
 
-## Problem Statement and Motivation  
-
-Over the past years, financial markets have experienced strong speculation around artificial intelligence (AI).  
-Several analysts, including the IMF and major investment banks, have warned that a potential “AI bubble” could be forming, driven by high valuations and massive capital inflows toward tech and AI-related firms such as NVIDIA, Microsoft, and Meta.  
-
-The goal of this project is to apply machine learning methods to **detect speculative phases in a portfolio of AI-related assets**.  
-By identifying market regimes that exhibit characteristics of speculative behavior—such as abnormally high returns, volatility spikes, and increased trading volumes—the project aims to better understand how machine learning can be used to monitor financial bubbles and risk patterns.  
-
-This topic is both **financially relevant** (market behavior, portfolio risk) and **technically aligned** with the course objectives, as it combines data collection, feature engineering, and supervised classification using real-world data.
+## 1. Project Title  
+**Linking Pre-Earnings Fundamentals to Post-Earnings Market Reaction Using Machine Learning**
 
 ---
 
-## Planned Approach and Technologies  
+## 2. Motivation & Problem Statement  
 
-1. **Data Collection:**  
-   - Retrieve daily market data (prices, volumes, volatility) for a selection of AI-related stocks and ETFs (e.g., NVDA, MSFT, META, AIQ, ARKQ, QQQ) from Yahoo Finance using the `yfinance` API.  
-   - Build an equal-weighted “AI portfolio” for analysis.  
+Quarterly earnings announcements are among the most impactful events in equity markets. Prices often react sharply when new financial results are released, yet empirical research shows that markets do not always adjust immediately or efficiently. The **Post-Earnings Announcement Drift (PEAD)** suggests that stocks with positive surprises often continue to outperform the market after earnings, while negative surprises tend to underperform in the following weeks.
 
-2. **Feature Engineering:**  
-   - Compute technical indicators: returns, rolling volatility, RSI, moving averages, and momentum.  
-   - Create a binary target variable indicating whether a given period is “speculative” or “normal” (based on return and volume thresholds).  
+This project examines whether **publicly available information before the earnings announcement** contains predictive power about how the market will react afterward. The goal is not to forecast the earnings numbers themselves but to study whether a combination of **firm fundamentals** (revenue/EPS trends, margins, leverage, returns on capital) and **market-based signals** (momentum, volatility, valuation ratios) can help anticipate a stock’s **30-day post-earnings excess return** relative to the SPY benchmark.
 
-3. **Machine Learning Models:**  
-   - Train supervised classifiers such as Decision Trees, Random Forest, k-Nearest Neighbors, and AdaBoost from `scikit-learn`.  
-   - Evaluate with cross-validation and standard metrics (Accuracy, Precision, Recall, F1-score, Confusion Matrix).  
-
-4. **Interpretation:**  
-   - Compare detected speculative phases with actual market events (e.g., the 2023 AI rally).  
-   - Visualize results with `matplotlib` to highlight speculative vs. normal periods.
+The key question is:  
+**Can pre-earnings characteristics help predict whether a stock will overperform or underperform the market after reporting its results?**
 
 ---
 
-## Expected Challenges and How I’ll Address Them  
+## 3. Data Sources  
 
-- **Defining the “speculative” label:** Choosing consistent thresholds for abnormal price and volume movements may be subjective. I will test multiple definitions (percentile-based, z-score-based) and validate their stability.  
-- **Overfitting risk:** I will use cross-validation, hold-out sets, and regularization where possible to ensure generalization.  
-- **Correlated features:** I will apply feature scaling and correlation checks to avoid redundant inputs.  
+**Capital IQ (S&P Global)** will provide quarterly earnings dates and financial statement data: revenue, EPS, net income, margins, assets, debt, equity, free cash flow, leverage ratios.
 
----
+**Yahoo Finance (`yfinance`)** will provide daily stock prices and SPY benchmark data. From these series, I will compute:  
+- 1m/3m/6m pre-earnings momentum,  
+- 30-day pre-earnings volatility,  
+- 30-day post-earnings returns,  
+- excess returns relative to SPY.
 
-## Success Criteria  
-
-The project will be considered successful if:  
-- The model achieves an F1-score above 0.70 in classifying speculative vs. normal phases.  
-- The output patterns visually align with known market events and plausible speculative behavior.  
-- The entire pipeline (data → model → evaluation) is reproducible and well-documented on GitHub.
+All data used will be observable before the announcement to avoid look-ahead bias.
 
 ---
 
-## Stretch Goals  
+## 4. Planned Methodology  
 
-If time permits:  
-- Extend the analysis to a **multiclass classification** (e.g., normal / speculative / correction).  
-- Compare the AI portfolio with a benchmark index (e.g., S&P 500) to quantify excess volatility.  
-- Experiment with additional ML techniques such as Gradient Boosting or feature importance interpretation (SHAP values).
+For each firm and each earnings event, I will construct:  
+- a **feature vector** combining pre-announcement fundamentals and market indicators;  
+- a **regression label**: 30-day excess return;  
+- a **classification label**: 1 = outperform, 0 = underperform.
+
+Following Francesco’s feedback, the **null hypothesis (H₀)** is that excess returns are unpredictable. Under H₀, naïve forecasts should perform as well as any model. I will therefore include two baselines:  
+- **Historical mean excess return** (computed over the training period),  
+- **CAPM-based expected excess return**, using betas estimated on the training sample.
+
+I will train supervised models:  
+- **Classification**: Logistic Regression, Random Forest Classifier  
+- **Regression**: Ridge Regression, Random Forest Regressor  
+
+A **time-based train/test split** (train ≤ 2019, test ≥ 2020) will simulate realistic forecasting conditions and avoid leakage.
+
+Evaluation will rely on accuracy, ROC-AUC, RMSE, MAE, feature importance, and economic interpretation. A simple backtest will assess whether buying predicted outperformers beats the SPY benchmark.
 
 ---
 
-**Author:** Ricardo Contente Guerreiro  
-**Course:** Data Science & Advanced Programming (HEC Lausanne, MSc Finance)  
-**Date:** November 2025
+## 5. Expected Contribution & Challenges  
+
+This project builds a complete, reproducible ML pipeline linking pre-earnings firm characteristics to post-earnings market reaction. It tests whether any structure exists beyond naïve baselines. Challenges include aligning Capital IQ and Yahoo Finance data, handling missing observations, and dealing with noise in financial returns.
+
+Success will be defined by:  
+- a clean end-to-end implementation,  
+- meaningful comparisons to naïve baselines,  
+- interpretable results,  
+- and documentation aligned with the course rulebook.
