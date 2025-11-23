@@ -1,118 +1,102 @@
-"""
-Label construction module for post-earnings returns.
-
-This module constructs target labels for ML models:
-- Excess returns (stock return - SPY return)
-- Classification labels (positive/negative, multi-class)
-- Regression labels (continuous excess returns)
-"""
+from typing import List, Tuple
 
 import pandas as pd
-import numpy as np
-from typing import List, Dict, Optional, Tuple, Union
-from datetime import datetime, timedelta
 
 
-def calculate_excess_returns(stock_prices: pd.DataFrame,
-                              spy_prices: pd.DataFrame,
-                              earnings_dates: pd.DataFrame,
-                              horizons: List[int] = [3, 5, 10]) -> pd.DataFrame:
+def add_labels(
+    df: pd.DataFrame,
+    er_col: str = "er_30d",
+    pos_threshold: float = 0.02,
+    neg_threshold: float = -0.02,
+) -> pd.DataFrame:
     """
-    Calculate post-earnings excess returns (stock - SPY).
-    
+    Add regression and classification labels to the dataframe.
+
     Parameters
     ----------
-    stock_prices : pd.DataFrame
-        Stock price data with (date, ticker) index
-    spy_prices : pd.DataFrame
-        SPY benchmark price data
-    earnings_dates : pd.DataFrame
-        DataFrame with earnings announcement dates
-    horizons : list of int
-        Post-earnings horizons in trading days
-        
+    df : pd.DataFrame
+        Input dataframe that must contain a column with excess returns.
+    er_col : str
+        Name of the excess return column (e.g. er_30d).
+    pos_threshold : float
+        Threshold above which a stock is considered an outperformer.
+    neg_threshold : float
+        Threshold below which a stock is considered an underperformer.
+
     Returns
     -------
     pd.DataFrame
-        DataFrame with excess returns for each horizon
+        Copy of the dataframe with two new columns:
+        - y_reg: continuous excess return
+        - y_class: 1 for outperform, 0 for underperform.
+          Rows between thresholds are dropped for classification.
     """
-    # TODO: Implement excess return calculation
-    raise NotImplementedError("Function to be implemented")
+    df = df.copy()
+
+    if er_col not in df.columns:
+        raise KeyError(f"Column '{er_col}' not found in dataframe.")
+
+    # Regression label = excess return itself
+    df["y_reg"] = df[er_col]
+
+    # Classification label
+    def classify(er: float):
+        if er > pos_threshold:
+            return 1
+        elif er < neg_threshold:
+            return 0
+        else:
+            return None
+
+    df["y_class"] = df[er_col].apply(classify)
+
+    # Remove neutral cases (close to zero excess return)
+    df = df.dropna(subset=["y_class"])
+    df["y_class"] = df["y_class"].astype(int)
+
+    return df
 
 
-def create_binary_labels(excess_returns: pd.DataFrame,
-                         threshold: float = 0.0) -> pd.DataFrame:
-    """Create binary classification labels from excess returns."""
-    # TODO: Implement binary label creation
-    raise NotImplementedError("Function to be implemented")
+def get_features_and_labels(
+    df: pd.DataFrame,
+    feature_cols: List[str] | None = None,
+) -> Tuple[pd.DataFrame, pd.Series, pd.Series]:
+    """
+    Split the dataframe into feature matrix X and labels y_class, y_reg.
 
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Dataframe returned by `add_labels`.
+    feature_cols : list of str, optional
+        List of feature column names. If None, defaults to a simple set
+        of columns suitable for the fake dataset.
 
-def create_multiclass_labels(excess_returns: pd.DataFrame,
-                              thresholds: List[float] = [-0.02, 0.02]) -> pd.DataFrame:
-    """Create multi-class classification labels from excess returns."""
-    # TODO: Implement multi-class label creation
-    raise NotImplementedError("Function to be implemented")
+    Returns
+    -------
+    X : pd.DataFrame
+        Feature matrix.
+    y_class : pd.Series
+        Binary labels (1/0).
+    y_reg : pd.Series
+        Continuous labels (excess returns).
+    """
+    if feature_cols is None:
+        feature_cols = [
+            "rev_growth",
+            "eps_growth",
+            "roe",
+            "leverage",
+            "momentum_3m",
+            "vol_30d",
+        ]
 
+    missing = [col for col in feature_cols if col not in df.columns]
+    if missing:
+        raise KeyError(f"Missing feature columns in dataframe: {missing}")
 
-def create_regression_labels(excess_returns: pd.DataFrame,
-                              winsorize: bool = True) -> pd.DataFrame:
-    """Create regression labels from excess returns."""
-    # TODO: Implement regression label creation
-    raise NotImplementedError("Function to be implemented")
+    X = df[feature_cols].copy()
+    y_class = df["y_class"].copy()
+    y_reg = df["y_reg"].copy()
 
-
-def calculate_baseline_predictions(historical_returns: pd.DataFrame,
-                                    method: str = 'mean') -> pd.Series:
-    """Calculate baseline predictions (historical mean or median)."""
-    # TODO: Implement baseline calculation
-    raise NotImplementedError("Function to be implemented")
-
-
-def calculate_capm_predictions(beta: pd.Series,
-                                market_return: float,
-                                risk_free_rate: float = 0.0) -> pd.Series:
-    """Calculate CAPM expected returns as baseline."""
-    # TODO: Implement CAPM calculation
-    raise NotImplementedError("Function to be implemented")
-
-
-def build_labels(stock_prices: pd.DataFrame,
-                 spy_prices: pd.DataFrame,
-                 earnings_dates: pd.DataFrame,
-                 label_type: str = 'binary',
-                 horizons: List[int] = [3, 5, 10],
-                 **kwargs) -> pd.DataFrame:
-    """Build complete label set for ML models."""
-    # TODO: Implement complete label pipeline
-    raise NotImplementedError("Function to be implemented")
-
-
-class LabelConstructor:
-    """Class for label construction pipeline."""
-    
-    def __init__(self, label_config: Optional[Dict] = None):
-        """Initialize LabelConstructor."""
-        self.label_config = label_config or self._default_config()
-        self.labels = None
-        
-    def _default_config(self) -> Dict:
-        """Return default label configuration."""
-        return {
-            'horizons': [3, 5, 10],
-            'label_type': 'binary',
-            'threshold': 0.0,
-        }
-        
-    def fit(self, stock_prices: pd.DataFrame,
-            spy_prices: pd.DataFrame,
-            earnings_dates: pd.DataFrame) -> 'LabelConstructor':
-        """Compute labels from data."""
-        # TODO: Implement fit method
-        raise NotImplementedError("Method to be implemented")
-        
-    def transform(self, stock_prices: pd.DataFrame,
-                  spy_prices: pd.DataFrame,
-                  earnings_dates: pd.DataFrame) -> pd.DataFrame:
-        """Apply label construction to new data."""
-        # TODO: Implement transform method
-        raise NotImplementedError("Method to be implemented")
+    return X, y_class, y_reg
