@@ -2,7 +2,7 @@
 
 **HEC Lausanne - MSc Finance**  
 **Data Science & Advanced Programming - Final Project**  
-**Academic Year: 2024-2025**
+**Academic Year: 2025-2026**
 
 ---
 
