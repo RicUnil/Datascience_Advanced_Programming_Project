@@ -1,195 +1,231 @@
-# Datascience_Advanced_Programming_Project# Linking Pre-Earnings Fundamentals to Post-Earnings Market Reaction Using Machine Learning
+# Earnings Post-Announcement Excess Return Prediction
 
-**HEC Lausanne - MSc Finance**  
-**Data Science & Advanced Programming - Final Project**  
-**Academic Year: 2025-2026**
-
----
-
-## Project Overview
-
-This project builds a complete machine learning pipeline to predict post-earnings market reactions based on pre-earnings fundamental data. The analysis combines:
-
-- **Firm fundamentals** from Capital IQ
-- **Stock prices and benchmark data** from Yahoo Finance
-- **Feature engineering** (momentum, volatility, valuation ratios)
-- **Label construction** (excess returns, classification targets)
-- **Baseline models** (historical mean, CAPM)
-- **ML models** (Logistic Regression, Random Forest)
-- **Event-driven backtesting**
+**Advanced Programming 2025 — HEC Lausanne**  
+**Ricardo Guerreiro | MSc Finance**
 
 ---
 
-## Project Structure
+## 🎯 Overview
 
-```
-project/
-│
-├── README.md                  # This file
-├── PROPOSAL.md                # Project proposal
-├── AI_USAGE.md                # Documentation of AI assistance
-├── requirements.txt           # Python dependencies
-│
-├── src/                       # Source code
-│   ├── __init__.py
-│   ├── data/                  # Data loading and processing
-│   │   ├── __init__.py
-│   │   ├── load_data.py       # Load Capital IQ and Yahoo Finance data
-│   │   ├── build_features.py  # Feature engineering
-│   │   └── build_labels.py    # Label construction
-│   │
-│   ├── models/                # ML models
-│   │   ├── __init__.py
-│   │   ├── classifier.py      # Classification models
-│   │   └── regressor.py       # Regression models
-│   │
-│   └── utils/                 # Utilities
-│       ├── __init__.py
-│       ├── metrics.py         # Evaluation metrics
-│       └── plotting.py        # Visualization functions
-│
-├── data/                      # Data directory
-│   ├── raw/                   # Raw data files
-│   └── processed/             # Processed data files
-│
-├── notebooks/                 # Jupyter notebooks
-│   └── 01_exploration.ipynb   # Exploratory data analysis
-│
-├── tests/                     # Unit tests
-│   ├── __init__.py
-│   ├── test_data_pipeline.py  # Tests for data pipeline
-│   └── test_models.py         # Tests for models
-│
-├── results/                   # Model outputs and results
-│   ├── figures/               # Plots and visualizations
-│   └── models/                # Saved model artifacts
-│
-└── docs/                      # Additional documentation
-    └── methodology.md         # Detailed methodology
+Testing whether post-earnings excess returns are predictable using machine learning.
 
-```
+**Research Question:** Can we predict 30-day excess returns after earnings announcements?
+
+**Main Finding:** **No detectable predictive power in our setting** (R² ≈ 0, AUC ≈ 0.50)
+- Results consistent across models, time horizons, and validation methods
+- Findings consistent with rapid price incorporation for S&P 500 large-caps (2015–2024)
+- Results conditional on our feature set, universe, and evaluation design
+- See [Limitations](#️-limitations) for scope and interpretation
 
 ---
 
-## Installation
+## 📊 Key Results
 
-1. **Clone the repository** (or navigate to project directory)
+| Analysis | Best Model | Test Metric | Result |
+|----------|------------|-------------|--------|
+| **Regression** | Random Forest | R² = 0.0036 | <1% variance explained |
+| **Classification** | Gradient Boosting | AUC = 0.514 | Barely above random |
+| **Cross-Validation** | Random Forest | R² = -0.038 ± 0.045 | 95% CI includes zero |
+| **Multi-Horizon** | All models | R² ≈ 0 | No PEAD detected |
 
-2. **Create a virtual environment** (recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+**Statistical Tests:**
+- Bootstrap CIs: All include zero
+- Permutation tests: p > 0.05 (not significant)
+- Robustness: Holds across sectors and market regimes
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Data Quality:**
+- 19,300 earnings events (S&P 500, 2015–2024)
+- 23.2% missing data (median imputation)
+- No critical data leakage detected
 
 ---
 
-## Usage
+## 📊 Data
 
-### 1. Data Loading
-```python
-from src.data.load_data import load_fundamentals, load_prices
+**Dataset:** 19,300 earnings announcements | S&P 500 | 2015–2024  
+**Features:** 21 (fundamental + market + momentum)  
+**Split:** Train 50.8% | Val 12.7% | Test 36.5% (temporal)
 
-# Load firm fundamentals from Capital IQ
-fundamentals = load_fundamentals('data/raw/fundamentals.csv')
+---
 
-# Load stock prices from Yahoo Finance
-prices = load_prices(tickers=['AAPL', 'MSFT'], start_date='2020-01-01')
+## 📂 Project Structure
+
 ```
-
-### 2. Feature Engineering
-```python
-from src.data.build_features import build_features
-
-# Compute pre-earnings features
-features = build_features(fundamentals, prices)
-```
-
-### 3. Label Construction
-```python
-from src.data.build_labels import build_labels
-
-# Compute post-earnings excess returns
-labels = build_labels(prices, earnings_dates)
-```
-
-### 4. Model Training
-```python
-from src.models.classifier import EarningsClassifier
-from src.models.regressor import EarningsRegressor
-
-# Train classification model
-clf = EarningsClassifier(model_type='random_forest')
-clf.fit(X_train, y_train)
-
-# Train regression model
-reg = EarningsRegressor(model_type='random_forest')
-reg.fit(X_train, y_train)
-```
-
-### 5. Evaluation
-```python
-from src.utils.metrics import evaluate_classifier, evaluate_regressor
-
-# Evaluate models
-clf_metrics = evaluate_classifier(clf, X_test, y_test)
-reg_metrics = evaluate_regressor(reg, X_test, y_test)
+windsurf-project/
+├── src/                       # 27 pipeline steps (~21,800 lines)
+│   ├── step_01-22_*.py        # Main pipeline
+│   ├── analysis/              # Statistical tests
+│   ├── preprocessing/         # Feature engineering
+│   └── visualization/         # Plotting
+├── experiments/               # Robustness experiments
+│   ├── experiments_01/        # 10-day returns
+│   ├── experiments_02/        # 5-day returns
+│   ├── experiments_03/        # 0-day reaction
+│   ├── experiments_04/        # Window robustness
+│   └── experiments_05/        # Economic significance
+├── tests/                     # Unit tests (pytest)
+├── results/                   # Outputs (~500 MB, 30+ figures)
+├── data/                      # Raw data files
+└── docs/                      # Documentation
 ```
 
 ---
 
-## Data Sources
+## ⚙️ Setup
 
-- **Capital IQ**: Firm fundamentals (balance sheet, income statement, cash flow)
-- **Yahoo Finance**: Daily stock prices and SPY benchmark returns
+**Requirements:** Python ≥ 3.10 | 8 GB RAM | 5 GB disk
 
----
-
-## Methodology
-
-1. **Data Collection**: Load fundamentals and price data
-2. **Feature Engineering**: Compute momentum, volatility, valuation ratios
-3. **Label Construction**: Calculate excess returns (stock - SPY)
-4. **Baseline Models**: Historical mean, CAPM expected return
-5. **ML Models**: Logistic Regression, Random Forest
-6. **Evaluation**: Classification metrics, regression metrics, backtesting
-7. **Backtesting**: Event-driven strategy simulation
-
----
-
-## Testing
-
-Run unit tests:
 ```bash
-pytest tests/
+# Install dependencies
+pip install -r requirements.txt
+
+# Key packages: pandas, scikit-learn, xgboost, shap, matplotlib
 ```
 
-Run specific test file:
+---
+
+## 🚀 Usage
+
+### Run Complete Pipeline (~60 min)
+
 ```bash
-pytest tests/test_data_pipeline.py -v
+# Run steps 1-22 sequentially
+python3 -m src.step_01_project_setup
+python3 -m src.step_02_environment_setup
+# ... (see full list in original README or run_all.sh)
+python3 -m src.step_22_data_quality_analysis
+```
+
+**Pipeline Phases:**
+1. Data Loading (Steps 1-7) → 15-30 min
+2. Feature Engineering (Steps 8-10) → 5-10 min  
+3. Model Training (Steps 11-13) → 10-20 min
+4. Evaluation (Steps 14-20) → 15-25 min
+5. Advanced Analysis (Steps 16, 21-22) → 15-30 min
+
+### Run Experiments
+
+```bash
+# Multi-horizon experiments (5-10 min each)
+python3 -m experiments.experiments_01.src.experiment_01_returns_10d
+python3 -m experiments.experiments_02.src.experiment_02_returns_5d
+python3 -m experiments.experiments_03.src.experiment_03_day0_reaction
+python3 -m experiments.experiments_04.src.experiment_04_window_robustness
+python3 -m experiments.experiments_05.src.experiment_05_economic_significance
+```
+
+### Run Tests
+
+```bash
+pytest tests/ -v
 ```
 
 ---
 
-## Results
+## 🔬 Methodology
 
-Results, figures, and saved models are stored in the `results/` directory.
+**Pipeline:**
+1. Data collection (earnings, prices, fundamentals)
+2. Feature engineering (21 features: fundamental + market + momentum)
+3. Target: 30-day excess return vs SPY
+4. Temporal train/val/test split (no look-ahead)
+5. Model training (Ridge, Random Forest, XGBoost, Gradient Boosting)
+6. Evaluation (R², AUC, bootstrap CIs, permutation tests)
+7. Advanced analysis (SHAP, sector/regime robustness)
+
+**Robustness:**
+- 5-fold time-series cross-validation
+- Multi-horizon experiments (0, 5, 10, 30 days)
+- Window robustness testing (quarterly vs yearly)
+- Economic significance assessment
+- Data quality verification
 
 ---
 
-## License
+## ⚠️ Limitations & Scope
 
-This project is submitted as part of the HEC Lausanne MSc Finance curriculum.
+### What Our Evidence Supports ✅
+- **No detectable predictive power** within our specific experimental setup
+- Null result holds across multiple models, validation methods, and robustness checks
+- Findings are **consistent with** (but do not prove) rapid price incorporation for large-cap equities
+
+### What Our Evidence Does NOT Support ❌
+- Universal claims about market efficiency or impossibility of prediction
+- Conclusions beyond our feature set (21 variables), universe (S&P 500), or horizon (30 days)
+- Economic profitability assessment (no transaction costs included)
+
+### Methodological Scope
+
+Our findings are conditional on deliberate design choices:
+
+1. **Feature Set:** 21 fundamental/market variables (excludes textual data, analyst forecasts, options signals)
+2. **Universe:** S&P 500 large-caps only (survivorship bias, limited to liquid stocks)
+3. **Time Period:** 2015–2024 (specific market regime, may not generalize)
+4. **Prediction Horizon:** 30-day returns (different horizons may show different patterns)
+5. **Temporal Structure:** Fixed train/val/test splits with robustness checks (Experiment 4)
+
+**Key Insight:** Our null result is informative—it demonstrates that even sophisticated ML models fail to extract signal from post-earnings fundamental data in our setting. This is a meaningful empirical finding about the limits of predictability, not a methodological failure.
+
+**Precise Interpretation:** *"We find no evidence of predictability of 30-day post-earnings excess returns within our feature set, universe, horizon, and evaluation design."*
+
+📄 **See [`INTERPRETATION_AND_LIMITATIONS.md`](INTERPRETATION_AND_LIMITATIONS.md) for comprehensive academic discussion.**
 
 ---
 
-## Contact
+## 📚 Documentation
 
-**Author**: Ricardo Guerreiro  
-**Institution**: HEC Lausanne  
-**Program**: MSc Finance  
-**Course**: Data Science & Advanced Programming
+- **[INTERPRETATION_AND_LIMITATIONS.md](INTERPRETATION_AND_LIMITATIONS.md)** - Academic interpretation and scope discussion
+- **[LIMITATIONS.md](LIMITATIONS.md)** - Comprehensive limitations and threats to validity
+- **[AI_USAGE.md](AI_USAGE.md)** - AI tool usage transparency
+- **[experiments/EXPERIMENTS_COMPARISON.md](experiments/EXPERIMENTS_COMPARISON.md)** - Multi-horizon results
+- **[notebooks/](notebooks/)** - Jupyter analysis notebooks
+- **[results/step_21/CV_ANALYSIS_REPORT.md](results/step_21/CV_ANALYSIS_REPORT.md)** - Cross-validation analysis
+- **[results/step_22/DATA_QUALITY_REPORT.md](results/step_22/DATA_QUALITY_REPORT.md)** - Data quality verification
+
+---
+
+## 🎯 Highlights
+
+**Technical:**
+- 21,800 lines of Python | 27 modular steps | 5 experiments
+- Advanced analysis: Bootstrap CIs, permutation tests, SHAP
+- 30+ publication-quality figures
+
+**Academic Rigor:**
+- Hypothesis testing with proper statistical methods
+- 5-fold time-series cross-validation
+- Data quality verification (missing data, outliers, leakage)
+- Multiple testing corrections (Bonferroni, FDR)
+- Honest reporting of negative results
+
+**Key Insights:**
+- No detectable predictive power in our setting (R² ≈ 0, AUC ≈ 0.50)
+- Findings consistent with rapid price incorporation for S&P 500 large-caps
+- Null result robust across models, horizons, and validation methods
+- Results conditional on our specific feature set, universe, and evaluation design
+
+---
+
+## 🤖 AI Usage
+
+- **ChatGPT 4o:** Strategic planning
+- **Claude Sonnet 3.5:** Code implementation  
+- **Human:** 100% research design, analysis, interpretation
+
+See [AI_USAGE.md](AI_USAGE.md) for full transparency.
+
+---
+
+## 👤 Author
+
+**Ricardo Guerreiro**  
+MSc Finance  
+HEC Lausanne  
+Advanced Programming 2025
+
+---
+
+## 📜 License
+
+Academic project for educational purposes.  
+All rights reserved.

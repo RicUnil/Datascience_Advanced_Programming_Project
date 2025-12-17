@@ -1,0 +1,18 @@
+# Requirements for the Advanced Programming 2025 earnings prediction project.
+# Compatible with Python 3.8+ and optimized for pre-built wheels
+
+pandas>=1.5.0,<2.0.0
+numpy>=1.23.0,<1.25.0
+scikit-learn>=1.2.0,<1.4.0
+yfinance>=0.2.33
+matplotlib>=3.6.0,<3.8.0
+seaborn>=0.12.0,<0.13.0
+pyyaml>=6.0
+pytest>=7.2.0,<8.0.0
+joblib>=1.2.0,<1.4.0
+pyarrow>=10.0.0,<15.0.0
+
+# Advanced analysis dependencies (Step 16)
+shap>=0.42.0,<0.45.0
+scipy>=1.9.0,<1.12.0
+statsmodels>=0.13.0,<0.15.0

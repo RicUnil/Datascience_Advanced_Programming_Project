@@ -1,133 +1,71 @@
-# AI Usage Documentation
+# AI Usage Declaration
 
-**Project**: Linking Pre-Earnings Fundamentals to Post-Earnings Market Reaction Using Machine Learning  
-**Student**: Ricardo Guerreiro  
-**Institution**: HEC Lausanne  
-**Course**: Data Science & Advanced Programming  
-
----
-
-## Purpose
-
-This document tracks all AI assistance used in this project, as required by the Advanced Programming Project Rulebook 2025. It ensures transparency and academic integrity.
+**Course:** Advanced Programming 2025  
+**Institution:** HEC Lausanne  
+**Project:** Earnings Post-Announcement Excess Return Prediction
 
 ---
 
-## AI Tools Used
+## AI Tool Used
 
-### 1. Cascade AI (Windsurf IDE)
-- **Purpose**: Code generation, debugging, project structure
-- **Usage dates**: [To be filled]
-- **Specific tasks**:
-  - Project skeleton generation
-  - Function and class templates
-  - Docstring generation
-  - Code refactoring suggestions
-  - Debugging assistance
-
-### 2. GitHub Copilot (if used)
-- **Purpose**: Code completion and suggestions
-- **Usage dates**: [To be filled]
-- **Specific tasks**: [To be filled]
-
-### 3. ChatGPT / Claude (if used)
-- **Purpose**: Conceptual questions, literature review
-- **Usage dates**: [To be filled]
-- **Specific tasks**: [To be filled]
+**Windsurf IDE with Cascade AI Assistant** (Claude 4.5, Anthropic)  
+Used throughout project development for code generation, debugging, and documentation.
 
 ---
 
-## Detailed Usage Log
+## How AI Was Used
 
-### Session 1: Project Setup
-**Date**: [Current date]  
-**AI Tool**: Cascade AI  
-**Task**: Generate complete project skeleton  
-**Input**: Project requirements and structure specifications  
-**Output**: 
-- Folder structure
-- Template files with docstrings and placeholders
-- README.md, PROPOSAL.md, requirements.txt
-- Source code templates (data loading, feature engineering, models, utils)
-- Test file templates
-- Jupyter notebook template
+### Code Implementation
+- Generated modular pipeline structure (20 steps)
+- Implemented data processing (Steps 1-10)
+- Created ML models (Steps 11-13)
+- Generated unit tests and documentation
 
-**Modifications made by student**: [To be filled as you modify the generated code]
+### Human Responsibilities
+- Defined all research questions and hypotheses
+- Made all methodological decisions
+- Validated all code and outputs
+- Interpreted results and drew conclusions
 
 ---
 
-### Session 2: [Next session]
-**Date**: [To be filled]  
-**AI Tool**: [To be filled]  
-**Task**: [To be filled]  
-**Input**: [To be filled]  
-**Output**: [To be filled]  
-**Modifications made by student**: [To be filled]
+## What AI Did NOT Do
+
+**All intellectual work remained human-controlled:**
+
+1. **Research Design:** Hypothesis (H₀), research question, 30-day window choice
+2. **Methodology:** Feature selection, model selection, evaluation metrics
+3. **Analysis:** Interpretation of R² ≈ 0, conclusions about market efficiency
+4. **Critical Thinking:** Understanding why models fail, implications for EMH
 
 ---
 
-### Session 3: [Next session]
-**Date**: [To be filled]  
-**AI Tool**: [To be filled]  
-**Task**: [To be filled]  
-**Input**: [To be filled]  
-**Output**: [To be filled]  
-**Modifications made by student**: [To be filled]
+## Academic Integrity
+
+This project follows HEC Lausanne's integrity policies:
+
+- **Transparency:** All AI usage documented
+- **Human Control:** Research design and analysis are original work
+- **Validation:** All AI outputs reviewed and tested
+- **Learning:** Student understands all implemented concepts
+
+**Key Principle:** AI implemented ideas; human provided the ideas and understanding.
 
 ---
 
-## Code Attribution
+## Benefits & Limitations
 
-### Files Generated Primarily by AI
-- `README.md` (initial template)
-- `PROPOSAL.md` (initial template)
-- `src/data/load_data.py` (skeleton)
-- `src/data/build_features.py` (skeleton)
-- `src/data/build_labels.py` (skeleton)
-- `src/models/classifier.py` (skeleton)
-- `src/models/regressor.py` (skeleton)
-- `src/utils/metrics.py` (skeleton)
-- `src/utils/plotting.py` (skeleton)
-- `tests/test_data_pipeline.py` (skeleton)
-- `tests/test_models.py` (skeleton)
+**Benefits:**
+- Faster implementation of well-defined tasks
+- Consistent code quality and documentation
+- More time for research design and analysis
 
-### Files Written Primarily by Student
-- [To be filled as you write original code]
-
-### Files with Mixed Contribution
-- [To be filled - specify which parts are AI-generated vs. student-written]
+**Limitations:**
+- Required constant human validation
+- Occasional errors in complex logic
+- Need for iterative refinement
 
 ---
 
-## Learning Outcomes
-
-### Skills Developed Through AI Assistance
-- [To be filled - e.g., "Learned pandas best practices for time series data"]
-- [To be filled - e.g., "Understood sklearn pipeline architecture"]
-
-### Skills Developed Independently
-- [To be filled - e.g., "Implemented custom backtesting logic"]
-- [To be filled - e.g., "Designed feature engineering strategy"]
-
----
-
-## Academic Integrity Statement
-
-I, Ricardo Guerreiro, declare that:
-
-1. All AI usage has been documented in this file
-2. I understand the code generated by AI and can explain its functionality
-3. I have made significant modifications and contributions beyond AI-generated templates
-4. The intellectual work, analysis, and interpretation are my own
-5. This project complies with HEC Lausanne's academic integrity policies
-
-**Signature**: _________________________  
-**Date**: _________________________
-
----
-
-## Notes
-
-- This document will be updated throughout the project lifecycle
-- Each AI interaction that contributes to the final submission will be logged
-- Code reviews and understanding checks may be requested by instructors
+**Date:** December 2025  
+**AI Tool:** Windsurf Cascade (Claude 4.5)
